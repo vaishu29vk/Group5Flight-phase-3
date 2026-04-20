@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm \"c:/Users/harsa/Downloads/Group5Flight_Phase3_FI/Group5Flight_Phase2_FullProject/Group5Flight/Controllers/SearchController.cs\")",
+      "Bash(rm \"c:/Users/harsa/Downloads/Group5Flight_Phase3_FI/Group5Flight_Phase2_FullProject/Group5Flight/Areas/Airlines/Views/Flights/Dashboard.cshtml\")",
+      "Bash(rm \"c:/Users/harsa/Downloads/Group5Flight_Phase3_FI/Group5Flight_Phase2_FullProject/Group5Flight/Views/Home/Index.cshtml\")"
+    ]
+  }
+}

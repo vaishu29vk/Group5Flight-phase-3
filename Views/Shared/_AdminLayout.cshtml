@@ -1,0 +1,30 @@
+@{
+    Layout = "_Layout";
+    var actionName = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<nav class="nav-bar">
+    <ul class="left-nav">
+        <li>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index"
+               class="@(actionName == "Index" ? "active-link" : "")">Dashboard</a>
+        </li>
+        <li>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Manage"
+               class="@(actionName == "Manage" ? "active-link" : "")">Manage</a>
+        </li>
+        <li>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Rights"
+               class="@(actionName == "Rights" ? "active-link" : "")">Rights &amp; Obligations</a>
+        </li>
+    </ul>
+    <ul class="right-nav">
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="Index">View Site</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="admin-content">
+    @RenderBody()
+</div>

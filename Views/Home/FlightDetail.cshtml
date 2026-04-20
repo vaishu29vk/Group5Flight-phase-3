@@ -1,0 +1,49 @@
+@model Group5Flight.Models.Flight
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Flight Detail";
+}
+
+<h2 class="mt-3">Flight Detail</h2>
+
+<div class="card shadow-sm mt-3" style="max-width: 600px;">
+    <div class="card-header bg-primary text-white">
+        <strong>@Model.FlightCode</strong>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm mb-0">
+            <tbody>
+                <tr>
+                    <th>Airline</th>
+                    <td>
+                        @if (Model.Airline != null && !string.IsNullOrEmpty(Model.Airline.ImageName))
+                        {
+                            <img src="~/images/@Model.Airline.ImageName"
+                                 alt="@Model.Airline.Name" height="25" class="airline-logo" />
+                        }
+                        @Model.Airline?.Name
+                    </td>
+                </tr>
+                <tr><th>From</th><td>@Model.From</td></tr>
+                <tr><th>To</th><td>@Model.To</td></tr>
+                <tr><th>Date</th><td>@Model.Date.ToString("MM/dd/yyyy")</td></tr>
+                <tr><th>Departure</th><td>@Model.DepartureTime.ToString("hh:mm tt")</td></tr>
+                <tr><th>Arrival</th><td>@Model.ArrivalTime.ToString("hh:mm tt")</td></tr>
+                <tr><th>Cabin</th><td>@Model.CabinType</td></tr>
+                <tr><th>Aircraft</th><td>@Model.AircraftType</td></tr>
+                <tr><th>Emission</th><td>@Model.Emission kg</td></tr>
+                <tr><th>Price</th><td>$@Model.Price.ToString("N2")</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <a asp-controller="Home" asp-action="SearchFlights" class="btn btn-secondary btn-sm">
+            &larr; Back to Home
+        </a>
+        <form asp-controller="Home" asp-action="AddPick" method="post" class="form-inline-block">
+            <input type="hidden" name="flightId" value="@Model.FlightId" />
+            <button type="submit" class="btn btn-primary btn-sm">Select</button>
+        </form>
+    </div>
+</div>

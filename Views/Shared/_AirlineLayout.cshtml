@@ -1,0 +1,50 @@
+@{
+    Layout = "_Layout";
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<nav class="nav-bar">
+    <ul class="left-nav">
+
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Index"
+               class="@(currentAction == "Index" ? "active-link" : "")">
+               Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Manage"
+               class="@(currentAction == "Manage" ? "active-link" : "")">
+               Manage
+            </a>
+        </li>
+
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Regulation"
+               class="@(currentAction == "Regulation" ? "active-link" : "")">
+               Regulation
+            </a>
+        </li>
+
+    </ul>
+
+    <ul class="right-nav">
+        <li>
+            <a href="/">View Site</a>
+        </li>
+    </ul>
+</nav>
+
+@* TempData confirmation shown once in layout (Ch8 slide 46) *@
+@if (TempData.Keys.Contains("message"))
+{
+    <div class="alert alert-success alert-dismissible mx-3 mt-2" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="airline-content">
+    @RenderBody()
+</div>

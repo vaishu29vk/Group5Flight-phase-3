@@ -1,0 +1,43 @@
+@{
+    Layout = "_Layout";
+    var actionName = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<nav class="nav-bar">
+    <ul class="left-nav">
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Index"
+               class="@(actionName == "Index" || actionName == "Edit" ? "active-link" : "")">Dashboard</a>
+        </li>
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Manage"
+               class="@(actionName == "Manage" ? "active-link" : "")">Manage</a>
+        </li>
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Regulation"
+               class="@(actionName == "Regulation" ? "active-link" : "")">Regulation</a>
+        </li>
+    </ul>
+    <ul class="right-nav">
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="Index">View Site</a>
+        </li>
+    </ul>
+</nav>
+
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mx-3 mt-2" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="main-content">
+    @RenderBody()
+</div>
+
+@* moment.js must load BEFORE futuredate.js which depends on it *@
+<script src="~/lib/moment/moment.min.js"></script>
+
+@RenderSection("Scripts", required: false)

@@ -1,0 +1,195 @@
+@model Group5Flight.Models.FlightViewModel
+
+@{
+    Layout = "_AirlineLayout";
+    ViewData["Title"] = "Flights Management";
+    bool isEdit = Model.EditingFlight != null && Model.EditingFlight.FlightId > 0;
+}
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/futuredate.js"></script>
+}
+
+<div class="airline-dashboard">
+
+    <h3 class="form-section-title">@(isEdit ? "Edit Flight" : "Add New Flight")</h3>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger validation-summary mb-3"></div>
+
+    <form asp-area="Airlines" asp-controller="Flights" asp-action="Index" method="post" class="flight-form">
+
+        <input type="hidden" asp-for="EditingFlight!.FlightId" />
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.FlightCode">Flight Code</label>
+            <input asp-for="EditingFlight!.FlightCode" class="form-control" />
+            <span asp-validation-for="EditingFlight!.FlightCode" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.AirlineId">Airline</label>
+            <select name="EditingFlight.AirlineId" class="form-control">
+                <option value="">Select Airline</option>
+                @foreach (var item in Model.Airlines)
+                {
+                    if (item.AirlineId == Model.EditingFlight!.AirlineId)
+                    {
+                        <option value="@item.AirlineId" selected="selected">@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.AirlineId">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.From">From (City)</label>
+            <input asp-for="EditingFlight!.From" class="form-control" />
+            <span asp-validation-for="EditingFlight!.From" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.To">To (City)</label>
+            <input asp-for="EditingFlight!.To" class="form-control" />
+            <span asp-validation-for="EditingFlight!.To" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.Date">Date</label>
+            <input asp-for="EditingFlight!.Date" type="date"
+                   value="@(isEdit? Model.EditingFlight!.Date.ToString("yyyy-MM-dd") : "")" class="form-control" />
+            <span asp-validation-for="EditingFlight!.Date" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.DepartureTime">Departure Time</label>
+            <input asp-for="EditingFlight!.DepartureTime" type="time"
+                   value="@(isEdit? Model.EditingFlight!.DepartureTime.ToString("HH:mm") : "")" class="form-control" />
+            <span asp-validation-for="EditingFlight!.DepartureTime" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.ArrivalTime">Arrival Time</label>
+            <input asp-for="EditingFlight!.ArrivalTime" type="time"
+                   value="@(isEdit? Model.EditingFlight!.ArrivalTime.ToString("HH:mm") : "")" class="form-control" />
+            <span asp-validation-for="EditingFlight!.ArrivalTime" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.CabinType">Cabin Type</label>
+            <select name="EditingFlight.CabinType" class="form-control">
+                @foreach (var c in Group5Flight.Models.FlightViewModel.CabinTypes)
+                {
+                    if (Model.EditingFlight!.CabinType == c)
+                    {
+                        <option value="@c" selected="selected">@c</option>
+                    }
+                    else
+                    {
+                        <option value="@c">@c</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.AircraftType">Aircraft Type</label>
+            <select name="EditingFlight.AircraftType" class="form-control">
+                @foreach (var a in Group5Flight.Models.FlightViewModel.AircraftTypes)
+                {
+                    if (Model.EditingFlight!.AircraftType == a)
+                    {
+                        <option value="@a" selected="selected">@a</option>
+                    }
+                    else
+                    {
+                        <option value="@a">@a</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.Emission">Emission (kg CO&#x2082;)</label>
+            <input asp-for="EditingFlight!.Emission" type="number" step="0.1" class="form-control" />
+            <span asp-validation-for="EditingFlight!.Emission" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="EditingFlight!.Price">Price ($)</label>
+            <input asp-for="EditingFlight!.Price" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="EditingFlight!.Price" class="text-danger field-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">
+                @(isEdit ? "Save Changes" : "Add Flight")
+            </button>
+            @if (isEdit)
+            {
+                <a asp-area="Airlines" asp-controller="Flights" asp-action="Index" class="btn-back">Cancel</a>
+            }
+        </div>
+
+    </form>
+
+    <hr class="section-divider" />
+
+    <h3 class="form-section-title">All Flights</h3>
+
+    <table class="flights-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Airline</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Cabin</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var f in Model.Flights)
+            {
+                <tr>
+                    <td>@f.FlightCode</td>
+                    <td>
+                        @if (f.Airline != null && !string.IsNullOrEmpty(f.Airline.ImageName))
+                        {
+                            <img src="~/images/@f.Airline.ImageName" alt="@f.Airline.Name" class="airline-logo" />
+                        }
+                        @f.Airline?.Name
+                    </td>
+                    <td>@f.From</td>
+                    <td>@f.To</td>
+                    <td>@f.Date.ToShortDateString()</td>
+                    <td>@f.DepartureTime.ToString("hh:mm tt")</td>
+                    <td>@f.ArrivalTime.ToString("hh:mm tt")</td>
+                    <td>@f.CabinType</td>
+                    <td>$@f.Price</td>
+                    <td class="action-cell">
+                        <a asp-area="Airlines" asp-controller="Flights" asp-action="Edit" asp-route-id="@f.FlightId"
+                           class="btn-edit">Edit</a>
+                        <form asp-area="Airlines" asp-controller="Flights" asp-action="Delete" method="post"
+                              class="form-inline-block">
+                            <input type="hidden" name="id" value="@f.FlightId" />
+                            <button type="submit" class="btn-delete"
+                                    onclick="return confirm('Delete flight @f.FlightCode?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

@@ -1,0 +1,267 @@
+@model Group5Flight.Models.FlightViewModel
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Search Flights";
+}
+
+<h2 class="mt-3">Search Flights</h2>
+
+<div class="row g-3 mt-1">
+
+    @* ── Left column: Filter Panel ──────────────────────────────────── *@
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <strong>Filter</strong>
+            </div>
+            <div class="card-body">
+
+                <form asp-controller="Home" asp-action="SearchFlights" method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label">From</label>
+                        <select name="ActiveFrom" class="form-select">
+                            <option value="">-- Any --</option>
+                            @foreach (var city in Model.FromCities)
+                            {
+                                @if (Model.ActiveFrom == city)
+                                {
+                                    <option value="@city" selected="selected">@city</option>
+                                }
+                                else
+                                {
+                                    <option value="@city">@city</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">To</label>
+                        <select name="ActiveTo" class="form-select">
+                            <option value="">-- Any --</option>
+                            @foreach (var city in Model.ToCities)
+                            {
+                                @if (Model.ActiveTo == city)
+                                {
+                                    <option value="@city" selected="selected">@city</option>
+                                }
+                                else
+                                {
+                                    <option value="@city">@city</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Departure Date</label>
+                        <input type="text"
+                               id="datePicker"
+                               name="ActiveDate"
+                               class="form-control"
+                               value="@Model.ActiveDate"
+                               readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cabin Type</label>
+                        <select name="ActiveCabin" class="form-select">
+                            @if (string.IsNullOrEmpty(Model.ActiveCabin) || Model.ActiveCabin == "All")
+                            {
+                                <option value="All" selected="selected">All</option>
+                            }
+                            else
+                            {
+                                <option value="All">All</option>
+                            }
+                            @foreach (var cabin in Group5Flight.Models.FlightViewModel.CabinTypes)
+                            {
+                                @if (Model.ActiveCabin == cabin)
+                                {
+                                    <option value="@cabin" selected="selected">@cabin</option>
+                                }
+                                else
+                                {
+                                    <option value="@cabin">@cabin</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @* ── Right column: Results / Picks Panel ────────────────────────── *@
+    <div class="col-md-9">
+
+        @if (!Model.ShowPicks)
+        {
+            @* ── Search Results ─────────────────────────────────────── *@
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">
+                    Results
+                    <span class="badge bg-secondary">@Model.Flights.Count found</span>
+                </h5>
+            </div>
+
+            @if (!Model.Flights.Any())
+            {
+                <div class="alert alert-info">
+                    No flights match your criteria. Try adjusting the filters.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Airline</th>
+                                <th>Flight</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Date</th>
+                                <th>Departs</th>
+                                <th>Arrives</th>
+                                <th>Cabin</th>
+                                <th>Emission</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var f in Model.Flights)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (f.Airline != null && !string.IsNullOrEmpty(f.Airline.ImageName))
+                                        {
+                                            <img src="~/images/@f.Airline.ImageName"
+                                                 alt="@f.Airline.Name" height="25"
+                                                 class="airline-logo" />
+                                        }
+                                        @f.Airline?.Name
+                                    </td>
+                                    <td>@f.FlightCode</td>
+                                    <td>@f.From</td>
+                                    <td>@f.To</td>
+                                    <td>@f.Date.ToString("MM/dd/yyyy")</td>
+                                    <td>@f.DepartureTime.ToString("hh:mm tt")</td>
+                                    <td>@f.ArrivalTime.ToString("hh:mm tt")</td>
+                                    <td>@f.CabinType</td>
+                                    <td>@f.Emission kg</td>
+                                    <td>$@f.Price.ToString("N2")</td>
+                                    <td class="action-cell">
+                                        <a asp-controller="Home" asp-action="FlightDetail"
+                                           asp-route-id="@f.FlightId"
+                                           class="btn btn-sm btn-outline-secondary">Details</a>
+                                        <form asp-controller="Home" asp-action="AddPick"
+                                              method="post" class="form-inline-block">
+                                            <input type="hidden" name="flightId" value="@f.FlightId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                Pick
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+        else
+        {
+            @* ── My Picks Panel ─────────────────────────────────────── *@
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">
+                    My Picks
+                    <span class="badge bg-secondary">@Model.SelectionCount</span>
+                </h5>
+                <a asp-controller="Home" asp-action="SearchFlights"
+                   class="btn btn-outline-secondary btn-sm">
+                    &larr; Back to Results
+                </a>
+            </div>
+
+            @if (!Model.Flights.Any())
+            {
+                <div class="alert alert-info">
+                    No picks yet.
+                    <a asp-controller="Home" asp-action="SearchFlights">Browse flights</a>
+                    to get started.
+                </div>
+            }
+            else
+            {
+                <form asp-controller="Home" asp-action="ClearPicks"
+                      method="post" class="mb-2">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Clear all picks?')">
+                        Clear All Picks
+                    </button>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Airline</th>
+                                <th>Flight</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Date</th>
+                                <th>Departs</th>
+                                <th>Cabin</th>
+                                <th>Aircraft</th>
+                                <th>Emission</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var f in Model.Flights)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (f.Airline != null && !string.IsNullOrEmpty(f.Airline.ImageName))
+                                        {
+                                            <img src="~/images/@f.Airline.ImageName"
+                                                 alt="@f.Airline.Name" height="25"
+                                                 class="airline-logo" />
+                                        }
+                                        @f.Airline?.Name
+                                    </td>
+                                    <td>@f.FlightCode</td>
+                                    <td>@f.From</td>
+                                    <td>@f.To</td>
+                                    <td>@f.Date.ToString("MM/dd/yyyy")</td>
+                                    <td>@f.DepartureTime.ToString("hh:mm tt")</td>
+                                    <td>@f.CabinType</td>
+                                    <td>@f.AircraftType</td>
+                                    <td>@f.Emission kg</td>
+                                    <td>$@f.Price.ToString("N2")</td>
+                                    <td>
+                                                        <form asp-controller="Home" asp-action="RemovePick"
+                                              method="post" class="form-inline-block">
+                                            <input type="hidden" name="flightId" value="@f.FlightId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>

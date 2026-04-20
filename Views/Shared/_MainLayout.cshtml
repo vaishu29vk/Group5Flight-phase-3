@@ -1,0 +1,97 @@
+@{
+    Layout = "_Layout";
+
+    var controllerName = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var actionName     = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-2">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                Group5Flight
+            </a>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target=".navbar-collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark"
+                           asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark"
+                           asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                </ul>
+                <a asp-area="" asp-controller="Home" asp-action="SearchFlights"
+                   asp-route-showPicks="true"
+                   class="btn btn-outline-success btn-sm ms-auto">
+                    My Picks
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+@* Secondary nav-bar with active-link highlighting *@
+<nav class="nav-bar">
+    <ul class="left-nav">
+
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="Index"
+               class="@(controllerName == "Home" && actionName == "Index" ? "active-link" : "")">
+               Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="SearchFlights"
+               class="@(controllerName == "Home" && actionName == "SearchFlights" && Context.Request.Query["showPicks"] != "true" ? "active-link" : "")">
+               Search
+            </a>
+        </li>
+
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="SearchFlights"
+               asp-route-showPicks="true"
+               class="@(controllerName == "Home" && actionName == "SearchFlights" && Context.Request.Query["showPicks"] == "true" ? "active-link" : "")">
+               My Picks
+            </a>
+        </li>
+
+        <li>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy"
+               class="@(controllerName == "Home" && actionName == "Privacy" ? "active-link" : "")">
+               Privacy
+            </a>
+        </li>
+
+    </ul>
+
+    <ul class="right-nav">
+        <li>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index">Admin</a>
+        </li>
+        <li>
+            <a asp-area="Airlines" asp-controller="Flights" asp-action="Index">Airline</a>
+        </li>
+    </ul>
+</nav>
+
+@if (TempData.Keys.Contains("message"))
+{
+    <div class="alert alert-success alert-dismissible mx-3 mt-2" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="main-content">
+    @RenderBody()
+</div>
+
+@RenderSection("Scripts", required: false)
